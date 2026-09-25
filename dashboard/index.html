@@ -239,6 +239,50 @@
       border: 1px solid #e5e7eb;
     }
 
+    .answer-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .answer-card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    .answer-card h4 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: #111827;
+    }
+
+    .answer-value {
+      white-space: pre-wrap;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    .skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill {
+      background: #eef2ff;
+      color: #1f2937;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+
+    .answer-note {
+      color: #6b7280;
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
     @media (max-width: 800px) {
       .stats {
         grid-template-columns: repeat(2, 1fr);
@@ -295,7 +339,6 @@
 
 </div>
 
-
 <div id="dashboardSection" class="container" style="display:none;">
 
   <div class="dashboard-header">
@@ -310,7 +353,6 @@
     </button>
 
   </div>
-
 
   <div class="stats">
 
@@ -336,7 +378,6 @@
 
   </div>
 
-
   <div id="jobs" class="jobs">
 
     <div class="loading">
@@ -346,7 +387,6 @@
   </div>
 
 </div>
-
 
 <div id="applicationModal" class="modal">
 
@@ -374,7 +414,6 @@
 
     </div>
 
-
     <div class="application-section">
 
       <h3>Resume Version</h3>
@@ -385,7 +424,6 @@
       ></div>
 
     </div>
-
 
     <div class="application-section">
 
@@ -398,14 +436,13 @@
 
     </div>
 
-
     <div class="application-section">
 
       <h3>Application Answers</h3>
 
       <div
         id="applicationAnswers"
-        class="application-text"
+        class="answer-grid"
       ></div>
 
     </div>
@@ -414,92 +451,70 @@
 
 </div>
 
-
 <script>
 
   const SUPABASE_URL =
     "https://bovpcfirhvpocurjtnts.supabase.co";
 
-
   const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_d0PyV9AKpla2LSY875R3dQ_BBJo_zjG";
-
 
   const SUPABASE_AUTH_URL =
     SUPABASE_URL + "/auth/v1";
 
-
   const loginSection =
     document.getElementById("loginSection");
-
 
   const dashboardSection =
     document.getElementById("dashboardSection");
 
-
   const loginButton =
     document.getElementById("loginButton");
-
 
   const signOutButton =
     document.getElementById("signOutButton");
 
-
   const loginMessage =
     document.getElementById("loginMessage");
-
 
   const jobsContainer =
     document.getElementById("jobs");
 
-
   const userEmail =
     document.getElementById("userEmail");
-
 
   const applicationModal =
     document.getElementById("applicationModal");
 
-
   const closeModal =
     document.getElementById("closeModal");
-
 
   const applicationTitle =
     document.getElementById("applicationTitle");
 
-
   const applicationStatus =
     document.getElementById("applicationStatus");
-
 
   const resumeVersion =
     document.getElementById("resumeVersion");
 
-
   const coverLetter =
     document.getElementById("coverLetter");
-
 
   const applicationAnswers =
     document.getElementById("applicationAnswers");
 
-
   const jobCount =
     document.getElementById("jobCount");
-
 
   const matchCount =
     document.getElementById("matchCount");
 
-
   const remoteCount =
     document.getElementById("remoteCount");
 
-
   const contractCount =
     document.getElementById("contractCount");
-
 
   let accessToken = null;
 
@@ -518,11 +533,14 @@
 
   function showDashboard(user) {
 
-    accessToken = user.access_token;
+    accessToken =
+      user.access_token;
 
-    loginSection.style.display = "none";
+    loginSection.style.display =
+      "none";
 
-    dashboardSection.style.display = "block";
+    dashboardSection.style.display =
+      "block";
 
     userEmail.textContent =
       user.email || "";
@@ -534,13 +552,17 @@
 
   async function signIn() {
 
-    loginMessage.textContent = "";
+    loginMessage.textContent =
+      "";
 
     const email =
-      document.getElementById("email").value.trim();
+      document.getElementById("email")
+        .value
+        .trim();
 
     const password =
-      document.getElementById("password").value;
+      document.getElementById("password")
+        .value;
 
 
     if (!email || !password) {
@@ -553,9 +575,11 @@
     }
 
 
-    loginButton.disabled = true;
+    loginButton.disabled =
+      true;
 
-    loginButton.textContent = "Signing in...";
+    loginButton.textContent =
+      "Signing in...";
 
 
     try {
@@ -568,17 +592,25 @@
             method: "POST",
 
             headers: {
+
               "apikey":
                 SUPABASE_PUBLISHABLE_KEY,
 
               "Content-Type":
                 "application/json"
+
             },
 
             body: JSON.stringify({
-              email: email,
-              password: password
+
+              email:
+                email,
+
+              password:
+                password
+
             })
+
           }
         );
 
@@ -590,21 +622,28 @@
       if (!response.ok) {
 
         throw new Error(
+
           data.msg ||
+
           data.error_description ||
+
           data.message ||
+
           "Sign in failed."
+
         );
 
       }
 
 
       showDashboard({
+
         access_token:
           data.access_token,
 
         email:
           email
+
       });
 
 
@@ -615,7 +654,8 @@
 
     } finally {
 
-      loginButton.disabled = false;
+      loginButton.disabled =
+        false;
 
       loginButton.textContent =
         "Sign In";
@@ -632,20 +672,27 @@
       try {
 
         await fetch(
+
           SUPABASE_AUTH_URL +
           "/logout",
 
           {
+
             method: "POST",
 
             headers: {
+
               "apikey":
                 SUPABASE_PUBLISHABLE_KEY,
 
               "Authorization":
-                "Bearer " + accessToken
+                "Bearer " +
+                accessToken
+
             }
+
           }
+
         );
 
       } catch (error) {
@@ -657,7 +704,8 @@
     }
 
 
-    accessToken = null;
+    accessToken =
+      null;
 
     dashboardSection.style.display =
       "none";
@@ -665,8 +713,9 @@
     loginSection.style.display =
       "block";
 
-    document.getElementById("password").value =
-      "";
+    document.getElementById(
+      "password"
+    ).value = "";
 
   }
 
@@ -695,15 +744,30 @@
     if (job.salary_period === "hour") {
 
       return max
-        ? "$" + min + " - $" + max + "/hr"
-        : "$" + min + "/hr";
+        ? "$" +
+          min +
+          " - $" +
+          max +
+          "/hr"
+
+        : "$" +
+          min +
+          "/hr";
 
     }
 
 
     return max
-      ? "$" + min + " - $" + max + "/year"
-      : "$" + min + "/year";
+
+      ? "$" +
+        min +
+        " - $" +
+        max +
+        "/year"
+
+      : "$" +
+        min +
+        "/year";
 
   }
 
@@ -718,14 +782,23 @@
 
 
     remoteCount.textContent =
+
       jobs.filter(
-        job => job.work_type === "remote"
+
+        job =>
+          job.work_type === "remote"
+
       ).length;
 
 
     contractCount.textContent =
+
       jobs.filter(
-        job => job.employment_type === "contract"
+
+        job =>
+          job.employment_type ===
+          "contract"
+
       ).length;
 
 
@@ -751,9 +824,11 @@
 
 
     jobsContainer.innerHTML =
+
       jobs.map(job => {
 
         const applyUrl =
+
           job.application_url ||
           job.job_url ||
           "#";
@@ -850,11 +925,10 @@
 
               <button
                 class="application-button"
-                onclick="viewApplication('${escapeHtml(
-                  job.job_id
-                )}', '${escapeHtml(
-                  job.title || ""
-                )}')"
+                onclick="viewApplication(
+                  '${escapeHtml(job.job_id)}',
+                  '${escapeHtml(job.title || "")}'
+                )"
               >
                 View Application
               </button>
@@ -899,8 +973,11 @@
       const response =
 
         await fetch(
+
           endpoint,
+
           {
+
             method: "GET",
 
             headers: {
@@ -918,6 +995,7 @@
             }
 
           }
+
         );
 
 
@@ -928,10 +1006,12 @@
       if (!response.ok) {
 
         throw new Error(
+
           "Supabase error " +
           response.status +
           ": " +
           body
+
         );
 
       }
@@ -971,13 +1051,186 @@
   }
 
 
+  function renderApplicationAnswers(
+    payload
+  ) {
+
+    const answers =
+
+      payload &&
+      payload.answers
+
+        ? payload.answers
+
+        : {};
+
+
+    const keySkills =
+
+      Array.isArray(
+        answers.key_skills
+      )
+
+        ? answers.key_skills
+
+        : [];
+
+
+    const matchedSkills =
+
+      Array.isArray(
+        payload?.matched_skills
+      )
+
+        ? payload.matched_skills
+
+        : [];
+
+
+    const sections = [];
+
+
+    if (keySkills.length) {
+
+      sections.push(`
+
+        <div class="answer-card">
+
+          <h4>
+            Key Skills
+          </h4>
+
+          <div class="skill-list">
+
+            ${keySkills.map(skill =>
+
+              `<span class="skill">
+                ${escapeHtml(skill)}
+              </span>`
+
+            ).join("")}
+
+          </div>
+
+        </div>
+
+      `);
+
+    }
+
+
+    if (matchedSkills.length) {
+
+      sections.push(`
+
+        <div class="answer-card">
+
+          <h4>
+            Matched Skills
+          </h4>
+
+          <div class="skill-list">
+
+            ${matchedSkills.map(skill =>
+
+              `<span class="skill">
+                ${escapeHtml(skill)}
+              </span>`
+
+            ).join("")}
+
+          </div>
+
+        </div>
+
+      `);
+
+    }
+
+
+    const textSections = [
+
+      [
+        "Work Authorization",
+        answers.authorization
+      ],
+
+      [
+        "Why are you interested?",
+        answers.why_interested
+      ],
+
+      [
+        "Relevant Experience",
+        answers.relevant_experience
+      ]
+
+    ];
+
+
+    textSections.forEach(
+
+      ([label, value]) => {
+
+        if (value) {
+
+          sections.push(`
+
+            <div class="answer-card">
+
+              <h4>
+                ${escapeHtml(label)}
+              </h4>
+
+              <div class="answer-value">
+                ${escapeHtml(value)}
+              </div>
+
+            </div>
+
+          `);
+
+        }
+
+      }
+
+    );
+
+
+    applicationAnswers.innerHTML =
+
+      sections.length
+
+        ? sections.join("")
+
+        : `
+
+          <div class="answer-card">
+
+            <div class="answer-value">
+              No structured application answers available.
+            </div>
+
+            <div class="answer-note">
+              The application package was created,
+              but no answer fields were found.
+            </div>
+
+          </div>
+
+        `;
+
+  }
+
+
   async function viewApplication(
     jobId,
     title
   ) {
 
     applicationTitle.textContent =
-      title || "Application";
+      title ||
+      "Application";
 
 
     applicationStatus.textContent =
@@ -992,8 +1245,17 @@
       "";
 
 
-    applicationAnswers.textContent =
-      "";
+    applicationAnswers.innerHTML = `
+
+      <div class="answer-card">
+
+        <div class="answer-value">
+          Loading application answers...
+        </div>
+
+      </div>
+
+    `;
 
 
     applicationModal.style.display =
@@ -1018,8 +1280,11 @@
       const response =
 
         await fetch(
+
           endpoint,
+
           {
+
             method: "GET",
 
             headers: {
@@ -1040,6 +1305,7 @@
             }
 
           }
+
         );
 
 
@@ -1049,16 +1315,17 @@
 
       if (!response.ok) {
 
-        throw new Error(
-          body
-        );
+        throw new Error(body);
 
       }
 
 
       const data =
+
         body
+
           ? JSON.parse(body)
+
           : [];
 
 
@@ -1076,28 +1343,29 @@
 
 
       applicationStatus.textContent =
+
         app.status ||
         "N/A";
 
 
       resumeVersion.textContent =
+
         app.resume_version ||
         "N/A";
 
 
       coverLetter.textContent =
+
         app.cover_letter ||
         "Not available";
 
 
-      applicationAnswers.textContent =
+      renderApplicationAnswers(
 
-        JSON.stringify(
-          app.application_answers ||
-          {},
-          null,
-          2
-        );
+        app.application_answers ||
+        {}
+
+      );
 
 
     } catch (error) {
@@ -1105,8 +1373,22 @@
       applicationStatus.textContent =
         "Could not load application.";
 
+
       coverLetter.textContent =
         error.message;
+
+
+      applicationAnswers.innerHTML = `
+
+        <div class="answer-card">
+
+          <div class="answer-value">
+            Application answers could not be loaded.
+          </div>
+
+        </div>
+
+      `;
 
     }
 
@@ -1125,17 +1407,40 @@
   );
 
 
+  document
+    .getElementById("password")
+    .addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Enter") {
+
+          signIn();
+
+        }
+
+      }
+    );
+
+
   closeModal.addEventListener(
+
     "click",
+
     () => {
+
       applicationModal.style.display =
         "none";
+
     }
+
   );
 
 
   applicationModal.addEventListener(
+
     "click",
+
     event => {
 
       if (
@@ -1149,6 +1454,7 @@
       }
 
     }
+
   );
 
 </script>
