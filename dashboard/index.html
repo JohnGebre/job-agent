@@ -37,6 +37,66 @@
       padding: 0 20px;
     }
 
+    .login-box {
+      max-width: 420px;
+      margin: 60px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,.10);
+    }
+
+    .login-box h2 {
+      margin-top: 0;
+    }
+
+    .login-box input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      border: 0;
+      border-radius: 6px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    .login-box button:hover {
+      background: #1d4ed8;
+    }
+
+    .login-message {
+      margin-top: 12px;
+      color: #b91c1c;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    .signout {
+      border: 0;
+      background: #374151;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -48,7 +108,7 @@
       background: white;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
     }
 
     .stat h2 {
@@ -70,7 +130,7 @@
       background: white;
       border-radius: 10px;
       padding: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
     }
 
     .job h3 {
@@ -81,7 +141,6 @@
     .company {
       color: #4b5563;
       margin-bottom: 12px;
-      font-size: 16px;
     }
 
     .details {
@@ -98,6 +157,12 @@
       font-size: 13px;
     }
 
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
     .apply {
       display: inline-block;
       background: #2563eb;
@@ -105,11 +170,15 @@
       text-decoration: none;
       padding: 9px 15px;
       border-radius: 6px;
-      margin-right: 8px;
     }
 
-    .apply:hover {
-      background: #1d4ed8;
+    .application-button {
+      background: #111827;
+      color: white;
+      border: 0;
+      padding: 9px 15px;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
     .loading {
@@ -122,6 +191,54 @@
       color: #b91c1c;
     }
 
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      padding: 30px;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      max-width: 900px;
+      margin: 30px auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+    }
+
+    .close-button {
+      float: right;
+      border: 0;
+      background: #e5e7eb;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .application-section {
+      margin-top: 24px;
+    }
+
+    .application-section h3 {
+      margin-bottom: 8px;
+    }
+
+    .application-text {
+      white-space: pre-wrap;
+      line-height: 1.6;
+      background: #f9fafb;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
     @media (max-width: 800px) {
       .stats {
         grid-template-columns: repeat(2, 1fr);
@@ -131,6 +248,11 @@
     @media (max-width: 500px) {
       .stats {
         grid-template-columns: 1fr;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -143,7 +265,52 @@
   <p>Fresh matched jobs from your automated job scanner</p>
 </header>
 
-<div class="container">
+<div id="loginSection" class="container">
+
+  <div class="login-box">
+
+    <h2>Sign in</h2>
+
+    <input
+      id="email"
+      type="email"
+      placeholder="Email"
+      autocomplete="username"
+    >
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Password"
+      autocomplete="current-password"
+    >
+
+    <button id="loginButton">
+      Sign In
+    </button>
+
+    <div id="loginMessage" class="login-message"></div>
+
+  </div>
+
+</div>
+
+
+<div id="dashboardSection" class="container" style="display:none;">
+
+  <div class="dashboard-header">
+
+    <div>
+      <h2>Matched Jobs</h2>
+      <p id="userEmail"></p>
+    </div>
+
+    <button id="signOutButton" class="signout">
+      Sign Out
+    </button>
+
+  </div>
+
 
   <div class="stats">
 
@@ -169,6 +336,7 @@
 
   </div>
 
+
   <div id="jobs" class="jobs">
 
     <div class="loading">
@@ -179,29 +347,161 @@
 
 </div>
 
+
+<div id="applicationModal" class="modal">
+
+  <div class="modal-content">
+
+    <button
+      id="closeModal"
+      class="close-button"
+    >
+      Close
+    </button>
+
+    <h2 id="applicationTitle">
+      Application
+    </h2>
+
+    <div class="application-section">
+
+      <h3>Status</h3>
+
+      <div
+        id="applicationStatus"
+        class="application-text"
+      ></div>
+
+    </div>
+
+
+    <div class="application-section">
+
+      <h3>Resume Version</h3>
+
+      <div
+        id="resumeVersion"
+        class="application-text"
+      ></div>
+
+    </div>
+
+
+    <div class="application-section">
+
+      <h3>Cover Letter</h3>
+
+      <div
+        id="coverLetter"
+        class="application-text"
+      ></div>
+
+    </div>
+
+
+    <div class="application-section">
+
+      <h3>Application Answers</h3>
+
+      <div
+        id="applicationAnswers"
+        class="application-text"
+      ></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
 <script>
 
   const SUPABASE_URL =
     "https://bovpcfirhvpocurjtnts.supabase.co";
 
+
   const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_d0PyV9AKpla2LSY875R3dQ_BBJo_zjG";
+
+
+  const SUPABASE_AUTH_URL =
+    SUPABASE_URL + "/auth/v1";
+
+
+  const loginSection =
+    document.getElementById("loginSection");
+
+
+  const dashboardSection =
+    document.getElementById("dashboardSection");
+
+
+  const loginButton =
+    document.getElementById("loginButton");
+
+
+  const signOutButton =
+    document.getElementById("signOutButton");
+
+
+  const loginMessage =
+    document.getElementById("loginMessage");
 
 
   const jobsContainer =
     document.getElementById("jobs");
 
+
+  const userEmail =
+    document.getElementById("userEmail");
+
+
+  const applicationModal =
+    document.getElementById("applicationModal");
+
+
+  const closeModal =
+    document.getElementById("closeModal");
+
+
+  const applicationTitle =
+    document.getElementById("applicationTitle");
+
+
+  const applicationStatus =
+    document.getElementById("applicationStatus");
+
+
+  const resumeVersion =
+    document.getElementById("resumeVersion");
+
+
+  const coverLetter =
+    document.getElementById("coverLetter");
+
+
+  const applicationAnswers =
+    document.getElementById("applicationAnswers");
+
+
   const jobCount =
     document.getElementById("jobCount");
+
 
   const matchCount =
     document.getElementById("matchCount");
 
+
   const remoteCount =
     document.getElementById("remoteCount");
 
+
   const contractCount =
     document.getElementById("contractCount");
+
+
+  let accessToken = null;
 
 
   function escapeHtml(value) {
@@ -216,19 +516,181 @@
   }
 
 
+  function showDashboard(user) {
+
+    accessToken = user.access_token;
+
+    loginSection.style.display = "none";
+
+    dashboardSection.style.display = "block";
+
+    userEmail.textContent =
+      user.email || "";
+
+    loadJobs();
+
+  }
+
+
+  async function signIn() {
+
+    loginMessage.textContent = "";
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+
+    if (!email || !password) {
+
+      loginMessage.textContent =
+        "Enter your email and password.";
+
+      return;
+
+    }
+
+
+    loginButton.disabled = true;
+
+    loginButton.textContent = "Signing in...";
+
+
+    try {
+
+      const response =
+        await fetch(
+          SUPABASE_AUTH_URL +
+          "/token?grant_type=password",
+          {
+            method: "POST",
+
+            headers: {
+              "apikey":
+                SUPABASE_PUBLISHABLE_KEY,
+
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+              email: email,
+              password: password
+            })
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.msg ||
+          data.error_description ||
+          data.message ||
+          "Sign in failed."
+        );
+
+      }
+
+
+      showDashboard({
+        access_token:
+          data.access_token,
+
+        email:
+          email
+      });
+
+
+    } catch (error) {
+
+      loginMessage.textContent =
+        error.message;
+
+    } finally {
+
+      loginButton.disabled = false;
+
+      loginButton.textContent =
+        "Sign In";
+
+    }
+
+  }
+
+
+  async function signOut() {
+
+    if (accessToken) {
+
+      try {
+
+        await fetch(
+          SUPABASE_AUTH_URL +
+          "/logout",
+
+          {
+            method: "POST",
+
+            headers: {
+              "apikey":
+                SUPABASE_PUBLISHABLE_KEY,
+
+              "Authorization":
+                "Bearer " + accessToken
+            }
+          }
+        );
+
+      } catch (error) {
+
+        console.error(error);
+
+      }
+
+    }
+
+
+    accessToken = null;
+
+    dashboardSection.style.display =
+      "none";
+
+    loginSection.style.display =
+      "block";
+
+    document.getElementById("password").value =
+      "";
+
+  }
+
+
   function formatSalary(job) {
 
     if (job.salary_min == null) {
+
       return "Salary not listed";
+
     }
 
+
     const min =
-      Number(job.salary_min).toLocaleString();
+      Number(job.salary_min)
+        .toLocaleString();
+
 
     const max =
       job.salary_max != null
-        ? Number(job.salary_max).toLocaleString()
+        ? Number(job.salary_max)
+            .toLocaleString()
         : null;
+
 
     if (job.salary_period === "hour") {
 
@@ -237,6 +699,7 @@
         : "$" + min + "/hr";
 
     }
+
 
     return max
       ? "$" + min + " - $" + max + "/year"
@@ -253,10 +716,12 @@
     matchCount.textContent =
       jobs.length;
 
+
     remoteCount.textContent =
       jobs.filter(
         job => job.work_type === "remote"
       ).length;
+
 
     contractCount.textContent =
       jobs.filter(
@@ -267,6 +732,7 @@
     if (!jobs.length) {
 
       jobsContainer.innerHTML = `
+
         <div class="job">
 
           <h3>No matched jobs yet</h3>
@@ -276,108 +742,130 @@
           </p>
 
         </div>
+
       `;
 
       return;
+
     }
 
 
-    jobsContainer.innerHTML = jobs.map(job => {
+    jobsContainer.innerHTML =
+      jobs.map(job => {
 
-      const applyUrl =
-        job.application_url ||
-        job.job_url ||
-        "#";
-
-
-      const applicationStatus =
-        job.application_status ||
-        "not prepared";
+        const applyUrl =
+          job.application_url ||
+          job.job_url ||
+          "#";
 
 
-      return `
+        return `
 
-        <div class="job">
+          <div class="job">
 
-          <h3>
-            ${escapeHtml(
-              job.title || "Untitled Job"
-            )}
-          </h3>
+            <h3>
+              ${escapeHtml(
+                job.title ||
+                "Untitled Job"
+              )}
+            </h3>
 
 
-          <div class="company">
+            <div class="company">
 
-            ${escapeHtml(
-              job.company_name || "Company"
-            )}
+              ${escapeHtml(
+                job.company_name ||
+                "Company"
+              )}
+
+            </div>
+
+
+            <div class="details">
+
+              <span class="tag">
+                ${escapeHtml(
+                  job.work_type ||
+                  "Unknown"
+                )}
+              </span>
+
+
+              <span class="tag">
+                ${escapeHtml(
+                  job.employment_type ||
+                  "Unknown"
+                )}
+              </span>
+
+
+              <span class="tag">
+                ${escapeHtml(
+                  job.location_text ||
+                  "Location not listed"
+                )}
+              </span>
+
+
+              <span class="tag">
+                ${escapeHtml(
+                  formatSalary(job)
+                )}
+              </span>
+
+
+              <span class="tag">
+                Match:
+                ${escapeHtml(
+                  job.match_score ??
+                  "N/A"
+                )}
+              </span>
+
+
+              <span class="tag">
+                Application:
+                ${escapeHtml(
+                  job.application_status ||
+                  "not prepared"
+                )}
+              </span>
+
+            </div>
+
+
+            <div class="button-row">
+
+              <a
+                class="apply"
+                href="${escapeHtml(
+                  applyUrl
+                )}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Apply
+              </a>
+
+
+              <button
+                class="application-button"
+                onclick="viewApplication('${escapeHtml(
+                  job.job_id
+                )}', '${escapeHtml(
+                  job.title || ""
+                )}')"
+              >
+                View Application
+              </button>
+
+            </div>
 
           </div>
 
+        `;
 
-          <div class="details">
-
-            <span class="tag">
-              ${escapeHtml(
-                job.work_type || "Unknown"
-              )}
-            </span>
-
-
-            <span class="tag">
-              ${escapeHtml(
-                job.employment_type || "Unknown"
-              )}
-            </span>
-
-
-            <span class="tag">
-              ${escapeHtml(
-                job.location_text ||
-                "Location not listed"
-              )}
-            </span>
-
-
-            <span class="tag">
-              ${escapeHtml(
-                formatSalary(job)
-              )}
-            </span>
-
-
-            <span class="tag">
-              Match:
-              ${escapeHtml(
-                job.match_score ?? "N/A"
-              )}
-            </span>
-
-
-            <span class="tag">
-              Application:
-              ${escapeHtml(
-                applicationStatus
-              )}
-            </span>
-
-          </div>
-
-
-          <a
-            class="apply"
-            href="${escapeHtml(applyUrl)}"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Apply
-          </a>
-
-        </div>
-
-      `;
-
-    }).join("");
+      }).join("");
 
   }
 
@@ -387,9 +875,7 @@
     jobsContainer.innerHTML = `
 
       <div class="loading">
-
         Loading matched jobs...
-
       </div>
 
     `;
@@ -413,9 +899,7 @@
       const response =
 
         await fetch(
-
           endpoint,
-
           {
             method: "GET",
 
@@ -434,7 +918,6 @@
             }
 
           }
-
         );
 
 
@@ -445,12 +928,10 @@
       if (!response.ok) {
 
         throw new Error(
-
           "Supabase error " +
           response.status +
           ": " +
           body
-
         );
 
       }
@@ -467,9 +948,6 @@
 
     } catch (error) {
 
-      console.error(error);
-
-
       jobsContainer.innerHTML = `
 
         <div class="job">
@@ -480,8 +958,7 @@
 
           <p>
             ${escapeHtml(
-              error.message ||
-              "Unknown error"
+              error.message
             )}
           </p>
 
@@ -494,7 +971,185 @@
   }
 
 
-  loadJobs();
+  async function viewApplication(
+    jobId,
+    title
+  ) {
+
+    applicationTitle.textContent =
+      title || "Application";
+
+
+    applicationStatus.textContent =
+      "Loading...";
+
+
+    resumeVersion.textContent =
+      "";
+
+
+    coverLetter.textContent =
+      "";
+
+
+    applicationAnswers.textContent =
+      "";
+
+
+    applicationModal.style.display =
+      "block";
+
+
+    const endpoint =
+
+      SUPABASE_URL +
+
+      "/rest/v1/applications" +
+
+      "?job_id=eq." +
+
+      encodeURIComponent(jobId) +
+
+      "&select=status,resume_version,cover_letter,application_answers";
+
+
+    try {
+
+      const response =
+
+        await fetch(
+          endpoint,
+          {
+            method: "GET",
+
+            headers: {
+
+              "apikey":
+                SUPABASE_PUBLISHABLE_KEY,
+
+              "Authorization":
+                "Bearer " +
+                accessToken,
+
+              "Accept":
+                "application/json",
+
+              "Accept-Profile":
+                "public"
+
+            }
+
+          }
+        );
+
+
+      const body =
+        await response.text();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          body
+        );
+
+      }
+
+
+      const data =
+        body
+          ? JSON.parse(body)
+          : [];
+
+
+      if (!data.length) {
+
+        throw new Error(
+          "Application package not found."
+        );
+
+      }
+
+
+      const app =
+        data[0];
+
+
+      applicationStatus.textContent =
+        app.status ||
+        "N/A";
+
+
+      resumeVersion.textContent =
+        app.resume_version ||
+        "N/A";
+
+
+      coverLetter.textContent =
+        app.cover_letter ||
+        "Not available";
+
+
+      applicationAnswers.textContent =
+
+        JSON.stringify(
+          app.application_answers ||
+          {},
+          null,
+          2
+        );
+
+
+    } catch (error) {
+
+      applicationStatus.textContent =
+        "Could not load application.";
+
+      coverLetter.textContent =
+        error.message;
+
+    }
+
+  }
+
+
+  loginButton.addEventListener(
+    "click",
+    signIn
+  );
+
+
+  signOutButton.addEventListener(
+    "click",
+    signOut
+  );
+
+
+  closeModal.addEventListener(
+    "click",
+    () => {
+      applicationModal.style.display =
+        "none";
+    }
+  );
+
+
+  applicationModal.addEventListener(
+    "click",
+    event => {
+
+      if (
+        event.target ===
+        applicationModal
+      ) {
+
+        applicationModal.style.display =
+          "none";
+
+      }
+
+    }
+  );
 
 </script>
 
