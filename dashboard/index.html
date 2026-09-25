@@ -1,1 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yohannes Job Agent</title>
 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    header {
+      background: #111827;
+      color: white;
+      padding: 24px 30px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: #d1d5db;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .stat {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .stat h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .stat p {
+      margin: 0;
+      color: #6b7280;
+    }
+
+    .jobs {
+      display: grid;
+      gap: 16px;
+    }
+
+    .job {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    }
+
+    .job h3 {
+      margin: 0 0 8px;
+    }
+
+    .company {
+      color: #4b5563;
+      margin-bottom: 12px;
+    }
+
+    .details {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+
+    .tag {
+      background: #eef2ff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .apply {
+      display: inline-block;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      padding: 9px 15px;
+      border-radius: 6px;
+    }
+
+    .apply:hover {
+      background: #1d4ed8;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 800px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Yohannes Job Agent</h1>
+  <p>Fresh matched jobs from your automated job scanner</p>
+</header>
+
+<div class="container">
+
+  <div class="stats">
+    <div class="stat">
+      <h2 id="jobCount">0</h2>
+      <p>Jobs Found</p>
+    </div>
+
+    <div class="stat">
+      <h2 id="matchCount">0</h2>
+      <p>Matches</p>
+    </div>
+
+    <div class="stat">
+      <h2 id="remoteCount">0</h2>
+      <p>Remote</p>
+    </div>
+
+    <div class="stat">
+      <h2 id="contractCount">0</h2>
+      <p>Contract</p>
+    </div>
+  </div>
+
+  <div id="jobs" class="jobs">
+    <div class="loading">Loading jobs...</div>
+  </div>
+
+</div>
+
+<script>
+  /*
+    Dashboard UI only.
+    We will connect the data source in the next step.
+  */
+
+  const jobsContainer = document.getElementById("jobs");
+
+  jobsContainer.innerHTML = `
+    <div class="job">
+      <h3>Dashboard Ready</h3>
+      <div class="company">Job Agent</div>
+      <p>Your dashboard has been created successfully.</p>
+    </div>
+  `;
+</script>
+
+</body>
+</html>
