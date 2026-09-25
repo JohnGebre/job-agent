@@ -282,11 +282,12 @@
 
       const response = await fetch(endpoint, {
         method: "GET",
-        headers: {
-          "apikey": SUPABASE_PUBLISHABLE_KEY,
-          "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-          "Accept": "application/json"
-        }
+       headers: {
+  "apikey": SUPABASE_PUBLISHABLE_KEY,
+  "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
+  "Accept": "application/json",
+  "Accept-Profile": "public"
+}
       });
 
       const body = await response.text();
