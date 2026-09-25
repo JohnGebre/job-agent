@@ -99,7 +99,7 @@
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 16px;
       margin-bottom: 30px;
     }
@@ -157,28 +157,67 @@
       font-size: 13px;
     }
 
+    .status-prepared {
+      background: #eef2ff;
+    }
+
+    .status-applied {
+      background: #ecfdf5;
+    }
+
+    .status-interview {
+      background: #fff7ed;
+    }
+
+    .status-rejected {
+      background: #fef2f2;
+    }
+
+    .status-offer {
+      background: #f0fdf4;
+    }
+
+    .status-withdrawn {
+      background: #f3f4f6;
+    }
+
     .button-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
 
-    .apply {
-      display: inline-block;
-      background: #2563eb;
-      color: white;
-      text-decoration: none;
+    .apply,
+    .application-button,
+    .copy-button,
+    .save-button {
       padding: 9px 15px;
       border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      border: 0;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .apply {
+      background: #2563eb;
+      color: white;
     }
 
     .application-button {
       background: #111827;
       color: white;
-      border: 0;
-      padding: 9px 15px;
-      border-radius: 6px;
-      cursor: pointer;
+    }
+
+    .copy-button {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .save-button {
+      background: #16a34a;
+      color: white;
     }
 
     .loading {
@@ -189,6 +228,10 @@
 
     .error {
       color: #b91c1c;
+    }
+
+    .success {
+      color: #15803d;
     }
 
     .modal {
@@ -283,7 +326,33 @@
       margin-top: 8px;
     }
 
-    @media (max-width: 800px) {
+    .status-control {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .status-control select {
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      background: white;
+    }
+
+    .status-message {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 1000px) {
+      .stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 700px) {
       .stats {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -297,6 +366,15 @@
       .dashboard-header {
         flex-direction: column;
         align-items: flex-start;
+      }
+
+      .modal {
+        padding: 10px;
+      }
+
+      .modal-content {
+        margin: 10px auto;
+        padding: 20px;
       }
     }
   </style>
@@ -376,6 +454,11 @@
       <p>Contract</p>
     </div>
 
+    <div class="stat">
+      <h2 id="appliedCount">0</h2>
+      <p>Applied</p>
+    </div>
+
   </div>
 
   <div id="jobs" class="jobs">
@@ -405,11 +488,50 @@
 
     <div class="application-section">
 
-      <h3>Status</h3>
+      <h3>Application Status</h3>
+
+      <div class="status-control">
+
+        <select id="applicationStatusSelect">
+
+          <option value="prepared">
+            Prepared
+          </option>
+
+          <option value="applied">
+            Applied
+          </option>
+
+          <option value="interview">
+            Interview
+          </option>
+
+          <option value="rejected">
+            Rejected
+          </option>
+
+          <option value="offer">
+            Offer
+          </option>
+
+          <option value="withdrawn">
+            Withdrawn
+          </option>
+
+        </select>
+
+        <button
+          id="saveStatusButton"
+          class="save-button"
+        >
+          Save Status
+        </button>
+
+      </div>
 
       <div
-        id="applicationStatus"
-        class="application-text"
+        id="statusMessage"
+        class="status-message"
       ></div>
 
     </div>
@@ -429,6 +551,19 @@
 
       <h3>Cover Letter</h3>
 
+      <div class="button-row">
+
+        <button
+          id="copyCoverLetterButton"
+          class="copy-button"
+        >
+          Copy Cover Letter
+        </button>
+
+      </div>
+
+      <br>
+
       <div
         id="coverLetter"
         class="application-text"
@@ -439,6 +574,19 @@
     <div class="application-section">
 
       <h3>Application Answers</h3>
+
+      <div class="button-row">
+
+        <button
+          id="copyAnswersButton"
+          class="copy-button"
+        >
+          Copy Answers
+        </button>
+
+      </div>
+
+      <br>
 
       <div
         id="applicationAnswers"
@@ -492,41 +640,118 @@
   const applicationTitle =
     document.getElementById("applicationTitle");
 
-  const applicationStatus =
-    document.getElementById("applicationStatus");
+  const applicationStatusSelect =
+    document.getElementById(
+      "applicationStatusSelect"
+    );
+
+  const saveStatusButton =
+    document.getElementById(
+      "saveStatusButton"
+    );
+
+  const statusMessage =
+    document.getElementById(
+      "statusMessage"
+    );
 
   const resumeVersion =
-    document.getElementById("resumeVersion");
+    document.getElementById(
+      "resumeVersion"
+    );
 
   const coverLetter =
-    document.getElementById("coverLetter");
+    document.getElementById(
+      "coverLetter"
+    );
 
   const applicationAnswers =
-    document.getElementById("applicationAnswers");
+    document.getElementById(
+      "applicationAnswers"
+    );
+
+  const copyCoverLetterButton =
+    document.getElementById(
+      "copyCoverLetterButton"
+    );
+
+  const copyAnswersButton =
+    document.getElementById(
+      "copyAnswersButton"
+    );
 
   const jobCount =
-    document.getElementById("jobCount");
+    document.getElementById(
+      "jobCount"
+    );
 
   const matchCount =
-    document.getElementById("matchCount");
+    document.getElementById(
+      "matchCount"
+    );
 
   const remoteCount =
-    document.getElementById("remoteCount");
+    document.getElementById(
+      "remoteCount"
+    );
 
   const contractCount =
-    document.getElementById("contractCount");
+    document.getElementById(
+      "contractCount"
+    );
+
+  const appliedCount =
+    document.getElementById(
+      "appliedCount"
+    );
 
   let accessToken = null;
+
+  let currentJobId = null;
+
+  let currentCoverLetter = "";
+
+  let currentAnswersText = "";
 
 
   function escapeHtml(value) {
 
     return String(value ?? "")
+
       .replaceAll("&", "&amp;")
+
       .replaceAll("<", "&lt;")
+
       .replaceAll(">", "&gt;")
+
       .replaceAll('"', "&quot;")
+
       .replaceAll("'", "&#039;");
+
+  }
+
+
+  function statusLabel(status) {
+
+    const labels = {
+
+      prepared: "Prepared",
+
+      applied: "Applied",
+
+      interview: "Interview",
+
+      rejected: "Rejected",
+
+      offer: "Offer",
+
+      withdrawn: "Withdrawn"
+
+    };
+
+    return labels[status] ||
+      status ||
+      "Prepared";
 
   }
 
@@ -586,9 +811,12 @@
 
       const response =
         await fetch(
+
           SUPABASE_AUTH_URL +
           "/token?grant_type=password",
+
           {
+
             method: "POST",
 
             headers: {
@@ -603,15 +831,13 @@
 
             body: JSON.stringify({
 
-              email:
-                email,
-
-              password:
-                password
+              email,
+              password
 
             })
 
           }
+
         );
 
 
@@ -641,8 +867,7 @@
         access_token:
           data.access_token,
 
-        email:
-          email
+        email
 
       });
 
@@ -736,14 +961,17 @@
 
     const max =
       job.salary_max != null
+
         ? Number(job.salary_max)
             .toLocaleString()
+
         : null;
 
 
     if (job.salary_period === "hour") {
 
       return max
+
         ? "$" +
           min +
           " - $" +
@@ -802,13 +1030,26 @@
       ).length;
 
 
+    appliedCount.textContent =
+
+      jobs.filter(
+
+        job =>
+          job.application_status ===
+          "applied"
+
+      ).length;
+
+
     if (!jobs.length) {
 
       jobsContainer.innerHTML = `
 
         <div class="job">
 
-          <h3>No matched jobs yet</h3>
+          <h3>
+            No matched jobs yet
+          </h3>
 
           <p>
             The scanner will add jobs automatically.
@@ -830,8 +1071,23 @@
         const applyUrl =
 
           job.application_url ||
+
           job.job_url ||
+
           "#";
+
+
+        const status =
+
+          job.application_status ||
+
+          "prepared";
+
+
+        const statusClass =
+
+          "status-" +
+          status;
 
 
         return `
@@ -859,51 +1115,64 @@
             <div class="details">
 
               <span class="tag">
+
                 ${escapeHtml(
                   job.work_type ||
                   "Unknown"
                 )}
+
               </span>
 
 
               <span class="tag">
+
                 ${escapeHtml(
                   job.employment_type ||
                   "Unknown"
                 )}
+
               </span>
 
 
               <span class="tag">
+
                 ${escapeHtml(
                   job.location_text ||
                   "Location not listed"
                 )}
+
               </span>
 
 
               <span class="tag">
+
                 ${escapeHtml(
                   formatSalary(job)
                 )}
+
               </span>
 
 
               <span class="tag">
+
                 Match:
                 ${escapeHtml(
                   job.match_score ??
                   "N/A"
                 )}
+
               </span>
 
 
-              <span class="tag">
-                Application:
+              <span
+                class="tag ${statusClass}"
+              >
+
+                Status:
                 ${escapeHtml(
-                  job.application_status ||
-                  "not prepared"
+                  statusLabel(status)
                 )}
+
               </span>
 
             </div>
@@ -912,25 +1181,37 @@
             <div class="button-row">
 
               <a
+
                 class="apply"
+
                 href="${escapeHtml(
                   applyUrl
                 )}"
+
                 target="_blank"
+
                 rel="noopener noreferrer"
+
               >
+
                 Apply
+
               </a>
 
 
               <button
+
                 class="application-button"
+
                 onclick="viewApplication(
                   '${escapeHtml(job.job_id)}',
                   '${escapeHtml(job.title || "")}'
                 )"
+
               >
+
                 View Application
+
               </button>
 
             </div>
@@ -949,7 +1230,9 @@
     jobsContainer.innerHTML = `
 
       <div class="loading">
+
         Loading matched jobs...
+
       </div>
 
     `;
@@ -1033,13 +1316,17 @@
         <div class="job">
 
           <h3 class="error">
+
             Could not load jobs
+
           </h3>
 
           <p>
+
             ${escapeHtml(
               error.message
             )}
+
           </p>
 
         </div>
@@ -1208,17 +1495,69 @@
           <div class="answer-card">
 
             <div class="answer-value">
+
               No structured application answers available.
+
             </div>
 
             <div class="answer-note">
+
               The application package was created,
               but no answer fields were found.
+
             </div>
 
           </div>
 
         `;
+
+
+    currentAnswersText = [
+
+      keySkills.length
+
+        ? "Key Skills:\n" +
+          keySkills.join(", ")
+
+        : "",
+
+
+      matchedSkills.length
+
+        ? "Matched Skills:\n" +
+          matchedSkills.join(", ")
+
+        : "",
+
+
+      answers.authorization
+
+        ? "Work Authorization:\n" +
+          answers.authorization
+
+        : "",
+
+
+      answers.why_interested
+
+        ? "Why are you interested?:\n" +
+          answers.why_interested
+
+        : "",
+
+
+      answers.relevant_experience
+
+        ? "Relevant Experience:\n" +
+          answers.relevant_experience
+
+        : ""
+
+    ]
+
+      .filter(Boolean)
+
+      .join("\n\n");
 
   }
 
@@ -1228,21 +1567,29 @@
     title
   ) {
 
+    currentJobId =
+      jobId;
+
+
+    statusMessage.textContent =
+      "";
+
+
     applicationTitle.textContent =
       title ||
       "Application";
 
 
-    applicationStatus.textContent =
-      "Loading...";
+    applicationStatusSelect.value =
+      "prepared";
 
 
     resumeVersion.textContent =
-      "";
+      "Loading...";
 
 
     coverLetter.textContent =
-      "";
+      "Loading...";
 
 
     applicationAnswers.innerHTML = `
@@ -1250,7 +1597,9 @@
       <div class="answer-card">
 
         <div class="answer-value">
+
           Loading application answers...
+
         </div>
 
       </div>
@@ -1342,10 +1691,10 @@
         data[0];
 
 
-      applicationStatus.textContent =
+      applicationStatusSelect.value =
 
         app.status ||
-        "N/A";
+        "prepared";
 
 
       resumeVersion.textContent =
@@ -1354,9 +1703,13 @@
         "N/A";
 
 
+      currentCoverLetter =
+        app.cover_letter || "";
+
+
       coverLetter.textContent =
 
-        app.cover_letter ||
+        currentCoverLetter ||
         "Not available";
 
 
@@ -1370,8 +1723,12 @@
 
     } catch (error) {
 
-      applicationStatus.textContent =
-        "Could not load application.";
+      applicationStatusSelect.value =
+        "prepared";
+
+
+      resumeVersion.textContent =
+        "N/A";
 
 
       coverLetter.textContent =
@@ -1383,12 +1740,185 @@
         <div class="answer-card">
 
           <div class="answer-value">
+
             Application answers could not be loaded.
+
           </div>
 
         </div>
 
       `;
+
+    }
+
+  }
+
+
+  async function saveApplicationStatus() {
+
+    if (!currentJobId) {
+
+      return;
+
+    }
+
+
+    const newStatus =
+
+      applicationStatusSelect.value;
+
+
+    saveStatusButton.disabled =
+      true;
+
+    saveStatusButton.textContent =
+      "Saving...";
+
+    statusMessage.textContent =
+      "";
+
+
+    try {
+
+      const endpoint =
+
+        SUPABASE_URL +
+
+        "/rest/v1/applications" +
+
+        "?job_id=eq." +
+
+        encodeURIComponent(
+          currentJobId
+        );
+
+
+      const response =
+
+        await fetch(
+
+          endpoint,
+
+          {
+
+            method: "PATCH",
+
+            headers: {
+
+              "apikey":
+                SUPABASE_PUBLISHABLE_KEY,
+
+              "Authorization":
+                "Bearer " +
+                accessToken,
+
+              "Content-Type":
+                "application/json",
+
+              "Prefer":
+                "return=minimal"
+
+            },
+
+            body: JSON.stringify({
+
+              status:
+                newStatus
+
+            })
+
+          }
+
+        );
+
+
+      const body =
+        await response.text();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+
+          "Could not save status: " +
+          body
+
+        );
+
+      }
+
+
+      statusMessage.textContent =
+
+        "Status saved: " +
+        statusLabel(newStatus);
+
+      statusMessage.className =
+        "status-message success";
+
+
+      await loadJobs();
+
+
+    } catch (error) {
+
+      statusMessage.textContent =
+        error.message;
+
+      statusMessage.className =
+        "status-message error";
+
+    } finally {
+
+      saveStatusButton.disabled =
+        false;
+
+      saveStatusButton.textContent =
+        "Save Status";
+
+    }
+
+  }
+
+
+  async function copyText(
+    textToCopy,
+    button,
+    successText
+  ) {
+
+    if (!textToCopy) {
+
+      return;
+
+    }
+
+
+    try {
+
+      await navigator.clipboard.writeText(
+        textToCopy
+      );
+
+      const oldText =
+        button.textContent;
+
+      button.textContent =
+        successText;
+
+      setTimeout(() => {
+
+        button.textContent =
+          oldText;
+
+      }, 1500);
+
+
+    } catch (error) {
+
+      alert(
+        "Copy failed. Please select and copy the text manually."
+      );
 
     }
 
@@ -1404,6 +1934,48 @@
   signOutButton.addEventListener(
     "click",
     signOut
+  );
+
+
+  saveStatusButton.addEventListener(
+    "click",
+    saveApplicationStatus
+  );
+
+
+  copyCoverLetterButton.addEventListener(
+    "click",
+    () => {
+
+      copyText(
+
+        currentCoverLetter,
+
+        copyCoverLetterButton,
+
+        "Copied!"
+
+      );
+
+    }
+  );
+
+
+  copyAnswersButton.addEventListener(
+    "click",
+    () => {
+
+      copyText(
+
+        currentAnswersText,
+
+        copyAnswersButton,
+
+        "Copied!"
+
+      );
+
+    }
   );
 
 
