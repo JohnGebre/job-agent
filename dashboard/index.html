@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="refresh" content="300">
+
   <title>Yohannes Job Agent</title>
 
   <style>
@@ -104,15 +105,29 @@
       border-radius: 6px;
     }
 
+    .apply:hover {
+      background: #1d4ed8;
+    }
+
     .loading {
       text-align: center;
       padding: 40px;
       color: #6b7280;
     }
 
+    .error {
+      color: #b91c1c;
+    }
+
     @media (max-width: 800px) {
       .stats {
         grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .stats {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -128,6 +143,7 @@
 <div class="container">
 
   <div class="stats">
+
     <div class="stat">
       <h2 id="jobCount">0</h2>
       <p>Jobs Found</p>
@@ -147,180 +163,382 @@
       <h2 id="contractCount">0</h2>
       <p>Contract</p>
     </div>
+
   </div>
 
   <div id="jobs" class="jobs">
-    <div class="loading">Loading jobs...</div>
+
+    <div class="loading">
+      Loading jobs...
+    </div>
+
   </div>
 
 </div>
 
 <script>
-  const SUPABASE_URL = "https://bovpcfirhvpocurjtnts.supabase.co";
+
+  const SUPABASE_URL =
+    "https://bovpcfirhvpocurjtnts.supabase.co";
 
   const SUPABASE_PUBLISHABLE_KEY =
     "sb_publishable_d0PyV9AKpla2LSY875R3dQ_BBJo_zjG";
 
-  const jobsContainer = document.getElementById("jobs");
-  const jobCount = document.getElementById("jobCount");
-  const matchCount = document.getElementById("matchCount");
-  const remoteCount = document.getElementById("remoteCount");
-  const contractCount = document.getElementById("contractCount");
+
+  const jobsContainer =
+    document.getElementById("jobs");
+
+  const jobCount =
+    document.getElementById("jobCount");
+
+  const matchCount =
+    document.getElementById("matchCount");
+
+  const remoteCount =
+    document.getElementById("remoteCount");
+
+  const contractCount =
+    document.getElementById("contractCount");
+
 
   function escapeHtml(value) {
+
     return String(value ?? "")
       .replaceAll("&", "&amp;")
       .replaceAll("<", "&lt;")
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
+
   }
 
+
   function formatSalary(job) {
+
     if (job.salary_min == null) {
+
       return "Salary not listed";
+
     }
 
-    const min = Number(job.salary_min).toLocaleString();
-    const max = job.salary_max != null
-      ? Number(job.salary_max).toLocaleString()
-      : null;
+
+    const min =
+      Number(job.salary_min).toLocaleString();
+
+
+    const max =
+      job.salary_max != null
+        ? Number(job.salary_max).toLocaleString()
+        : null;
+
 
     if (job.salary_period === "hour") {
+
       return max
         ? "$" + min + " - $" + max + "/hr"
         : "$" + min + "/hr";
+
     }
+
 
     return max
       ? "$" + min + " - $" + max + "/year"
       : "$" + min + "/year";
+
   }
 
+
   function renderJobs(jobs) {
-    jobCount.textContent = jobs.length;
-    matchCount.textContent = jobs.length;
+
+    jobCount.textContent =
+      jobs.length;
+
+
+    matchCount.textContent =
+      jobs.length;
+
 
     remoteCount.textContent =
-      jobs.filter(j => j.work_type === "remote").length;
+      jobs.filter(
+        job => job.work_type === "remote"
+      ).length;
+
 
     contractCount.textContent =
-      jobs.filter(j => j.employment_type === "contract").length;
+      jobs.filter(
+        job => job.employment_type === "contract"
+      ).length;
+
 
     if (!jobs.length) {
+
       jobsContainer.innerHTML = `
         <div class="job">
+
           <h3>No matched jobs yet</h3>
-          <p>The scanner will add jobs automatically.</p>
+
+          <p>
+            The scanner will add jobs automatically.
+          </p>
+
         </div>
       `;
+
       return;
+
     }
 
+
     jobsContainer.innerHTML = jobs.map(job => {
-      const applyUrl = job.application_url || job.job_url || "#";
+
+      const applyUrl =
+        job.application_url ||
+        job.job_url ||
+        "#";
+
+
+      const applicationStatus =
+        job.application_status ||
+        "not prepared";
+
 
       return `
+
         <div class="job">
 
-          <h3>${escapeHtml(job.title || "Untitled Job")}</h3>
+          <h3>
+            ${escapeHtml(
+              job.title || "Untitled Job"
+            )}
+          </h3>
+
 
           <div class="company">
-            ${escapeHtml(job.company_name || "Company")}
+
+            ${escapeHtml(
+              job.company_name || "Company"
+            )}
+
           </div>
+
 
           <div class="details">
 
-            <span class="tag">
-              ${escapeHtml(job.work_type || "Unknown")}
-            </span>
 
             <span class="tag">
-              ${escapeHtml(job.employment_type || "Unknown")}
+
+              ${escapeHtml(
+                job.work_type || "Unknown"
+              )}
+
             </span>
 
-            <span class="tag">
-              ${escapeHtml(job.location_text || "Location not listed")}
-            </span>
 
             <span class="tag">
-              ${escapeHtml(formatSalary(job))}
+
+              ${escapeHtml(
+                job.employment_type || "Unknown"
+              )}
+
             </span>
 
+
             <span class="tag">
-              Match: ${escapeHtml(job.match_score ?? "N/A")}
+
+              ${escapeHtml(
+                job.location_text ||
+                "Location not listed"
+              )}
+
             </span>
+
+
+            <span class="tag">
+
+              ${escapeHtml(
+                formatSalary(job)
+              )}
+
+            </span>
+
+
+            <span class="tag">
+
+              Match:
+              ${escapeHtml(
+                job.match_score ?? "N/A"
+              )}
+
+            </span>
+
+
+            <span class="tag">
+
+              Application:
+              ${escapeHtml(
+                applicationStatus
+              )}
+
+            </span>
+
 
           </div>
 
+
           <a
+
             class="apply"
+
             href="${escapeHtml(applyUrl)}"
+
             target="_blank"
+
             rel="noopener noreferrer"
+
           >
+
             Apply
+
           </a>
 
+
         </div>
+
       `;
+
     }).join("");
+
   }
+
 
   async function loadJobs() {
 
     jobsContainer.innerHTML = `
+
       <div class="loading">
+
         Loading matched jobs...
+
       </div>
+
     `;
 
+
     const endpoint =
+
       SUPABASE_URL +
-      "/rest/v1/job_feed?select=*&order=posted_at.desc&limit=100";
+
+      "/rest/v1/job_feed" +
+
+      "?select=*" +
+
+      "&order=posted_at.desc" +
+
+      "&limit=100";
+
 
     try {
 
-      const response = await fetch(endpoint, {
-        method: "GET",
-       headers: {
-  "apikey": SUPABASE_PUBLISHABLE_KEY,
-  "Authorization": "Bearer " + SUPABASE_PUBLISHABLE_KEY,
-  "Accept": "application/json",
-  "Accept-Profile": "public"
-}
-      });
 
-      const body = await response.text();
+      const response =
+
+        await fetch(
+
+          endpoint,
+
+          {
+
+            method: "GET",
+
+            headers: {
+
+              "apikey":
+                SUPABASE_PUBLISHABLE_KEY,
+
+              "Authorization":
+                "Bearer " +
+                SUPABASE_PUBLISHABLE_KEY,
+
+              "Accept":
+                "application/json",
+
+              "Accept-Profile":
+                "public"
+
+            }
+
+          }
+
+        );
+
+
+      const body =
+        await response.text();
+
 
       if (!response.ok) {
+
         throw new Error(
+
           "Supabase error " +
+
           response.status +
+
           ": " +
+
           body
+
         );
+
       }
 
-      const jobs = body ? JSON.parse(body) : [];
+
+      const jobs =
+        body
+          ? JSON.parse(body)
+          : [];
+
 
       renderJobs(jobs);
 
+
     } catch (error) {
+
 
       console.error(error);
 
+
       jobsContainer.innerHTML = `
+
         <div class="job">
-          <h3>Could not load jobs</h3>
-          <p>${escapeHtml(error.message)}</p>
+
+          <h3 class="error">
+
+            Could not load jobs
+
+          </h3>
+
+
+          <p>
+
+            ${escapeHtml(
+              error.message ||
+              "Unknown error"
+            )}
+
+          </p>
+
         </div>
+
       `;
 
     }
+
   }
 
+
   loadJobs();
+
 </script>
 
 </body>
