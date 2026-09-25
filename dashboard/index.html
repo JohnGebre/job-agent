@@ -48,7 +48,7 @@
       background: white;
       padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
     }
 
     .stat h2 {
@@ -70,16 +70,18 @@
       background: white;
       border-radius: 10px;
       padding: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
     }
 
     .job h3 {
       margin: 0 0 8px;
+      font-size: 21px;
     }
 
     .company {
       color: #4b5563;
       margin-bottom: 12px;
+      font-size: 16px;
     }
 
     .details {
@@ -103,6 +105,7 @@
       text-decoration: none;
       padding: 9px 15px;
       border-radius: 6px;
+      margin-right: 8px;
     }
 
     .apply:hover {
@@ -216,21 +219,16 @@
   function formatSalary(job) {
 
     if (job.salary_min == null) {
-
       return "Salary not listed";
-
     }
-
 
     const min =
       Number(job.salary_min).toLocaleString();
-
 
     const max =
       job.salary_max != null
         ? Number(job.salary_max).toLocaleString()
         : null;
-
 
     if (job.salary_period === "hour") {
 
@@ -239,7 +237,6 @@
         : "$" + min + "/hr";
 
     }
-
 
     return max
       ? "$" + min + " - $" + max + "/year"
@@ -253,16 +250,13 @@
     jobCount.textContent =
       jobs.length;
 
-
     matchCount.textContent =
       jobs.length;
-
 
     remoteCount.textContent =
       jobs.filter(
         job => job.work_type === "remote"
       ).length;
-
 
     contractCount.textContent =
       jobs.filter(
@@ -285,7 +279,6 @@
       `;
 
       return;
-
     }
 
 
@@ -324,83 +317,61 @@
 
           <div class="details">
 
-
             <span class="tag">
-
               ${escapeHtml(
                 job.work_type || "Unknown"
               )}
-
             </span>
 
 
             <span class="tag">
-
               ${escapeHtml(
                 job.employment_type || "Unknown"
               )}
-
             </span>
 
 
             <span class="tag">
-
               ${escapeHtml(
                 job.location_text ||
                 "Location not listed"
               )}
-
             </span>
 
 
             <span class="tag">
-
               ${escapeHtml(
                 formatSalary(job)
               )}
-
             </span>
 
 
             <span class="tag">
-
               Match:
               ${escapeHtml(
                 job.match_score ?? "N/A"
               )}
-
             </span>
 
 
             <span class="tag">
-
               Application:
               ${escapeHtml(
                 applicationStatus
               )}
-
             </span>
-
 
           </div>
 
 
           <a
-
             class="apply"
-
             href="${escapeHtml(applyUrl)}"
-
             target="_blank"
-
             rel="noopener noreferrer"
-
           >
-
             Apply
-
           </a>
-
 
         </div>
 
@@ -428,7 +399,7 @@
 
       SUPABASE_URL +
 
-      "/rest/v1/job_feed" +
+      "/rest/v1/job_feed_public" +
 
       "?select=*" +
 
@@ -439,7 +410,6 @@
 
     try {
 
-
       const response =
 
         await fetch(
@@ -447,7 +417,6 @@
           endpoint,
 
           {
-
             method: "GET",
 
             headers: {
@@ -460,10 +429,7 @@
                 SUPABASE_PUBLISHABLE_KEY,
 
               "Accept":
-                "application/json",
-
-              "Accept-Profile":
-                "public"
+                "application/json"
 
             }
 
@@ -481,11 +447,8 @@
         throw new Error(
 
           "Supabase error " +
-
           response.status +
-
           ": " +
-
           body
 
         );
@@ -504,7 +467,6 @@
 
     } catch (error) {
 
-
       console.error(error);
 
 
@@ -513,19 +475,14 @@
         <div class="job">
 
           <h3 class="error">
-
             Could not load jobs
-
           </h3>
 
-
           <p>
-
             ${escapeHtml(
               error.message ||
               "Unknown error"
             )}
-
           </p>
 
         </div>
